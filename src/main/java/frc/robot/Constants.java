@@ -37,11 +37,5 @@ public final class Constants {
     
     // assign port number to arm piston
     public static final int armMoverPort = 0;
-
-    // creates variables for the lift speed moving up and down
-    public static final double liftUpSpeed = 0.4;
-    public static final double liftDownSpeed = -0.4;
-
-
     
 }
