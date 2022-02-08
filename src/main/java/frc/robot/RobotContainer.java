@@ -16,10 +16,8 @@ import static edu.wpi.first.wpilibj.XboxController.Button.*;
 // import commands
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.ClimbAuto;
+import frc.robot.subsystems.Climb;
 
 // import RevDrivetrain subsystem
 import frc.robot.subsystems.RevDrivetrain;
@@ -43,7 +41,7 @@ public class RobotContainer {
   private final RevDrivetrain rDrive = new RevDrivetrain();
 
   // ClimAuto subsystem
-  private final ClimbAuto climbAuto = new ClimbAuto();
+  private final Climb climb = new Climb();
 
   // Drive with Controller 
   private Command manualDrive = new RunCommand(
@@ -59,7 +57,7 @@ public class RobotContainer {
     private Command moveArm = new RunCommand(
   
   // move the lift up and down with right and left triggers, respectively
-    () -> climbAuto.move(xbox.getRawAxis(kRightTrigger.value) - xbox.getRawAxis(kLeftTrigger.value)), climbAuto);
+    () -> climb.move(xbox.getRawAxis(kRightTrigger.value) - xbox.getRawAxis(kLeftTrigger.value)), climb);
 
   public RobotContainer() {
     rDrive.setDefaultCommand(manualDrive);
@@ -67,8 +65,8 @@ public class RobotContainer {
     // configure the button bindings
     configureButtonBindings();
 
-    // run climbAuto as the default command
-    climbAuto.setDefaultCommand(moveArm);
+    // run climbTeleop as the default command
+    climb.setDefaultCommand(moveArm);
   }
 
   private void configureButtonBindings() {
@@ -78,10 +76,10 @@ public class RobotContainer {
     // if it is not: run an empty instant command group (does nothing)
 
     new JoystickButton(xbox, kA.value)
-    .whenPressed(new InstantCommand (() -> climbAuto.reaching(false)));
+    .whenPressed(new InstantCommand (() -> climb.reaching(false)));
 
     new JoystickButton(xbox, kY.value)
-    .whenPressed(new InstantCommand (() -> climbAuto.reaching(true)));
+    .whenPressed(new InstantCommand (() -> climb.reaching(true)));
   }
 
   /**
