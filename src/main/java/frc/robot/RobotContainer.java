@@ -36,18 +36,19 @@ import static frc.robot.Constants.*;
 
 public class RobotContainer {
 
-  // Drive Controller
+  // drive controller
   private XboxController xbox = new XboxController(kXboxPort);
 
-  // Drive Subsystem
+  // drive subsystem
   private final RevDrivetrain rDrive = new RevDrivetrain();
 
-  // ClimAuto subsystem
+  // climbAuto subsystem
   private final ClimbAuto climbAuto = new ClimbAuto();
 
   // Drive with Controller 
   private Command manualDrive = new RunCommand(
     
+    // drives the robot using joysticks
     () -> rDrive.getDifferentialDrive().
     tankDrive(rDrive.deadband(xbox.getRawAxis(kLeftY.value), percentDeadband), 
     rDrive.deadband(xbox.getRawAxis(kRightY.value), percentDeadband),
@@ -62,24 +63,23 @@ public class RobotContainer {
     () -> climbAuto.move(xbox.getRawAxis(kRightTrigger.value) - xbox.getRawAxis(kLeftTrigger.value)), climbAuto);
 
   public RobotContainer() {
-    rDrive.setDefaultCommand(manualDrive);
 
     // configure the button bindings
     configureButtonBindings();
 
-    // run climbAuto as the default command
+    // default to running moveArm and manualDrive
     climbAuto.setDefaultCommand(moveArm);
+    rDrive.setDefaultCommand(manualDrive);
+
   }
 
   private void configureButtonBindings() {
     
-    // checking for whether hook is engaged when A is pressed
-    // if it is: run the climb sequential command group
-    // if it is not: run an empty instant command group (does nothing)
-
+    // moves arm in when A is pressed
     new JoystickButton(xbox, kA.value)
     .whenPressed(new InstantCommand (() -> climbAuto.reaching(false)));
 
+    // moves arm out when Y is pressed
     new JoystickButton(xbox, kY.value)
     .whenPressed(new InstantCommand (() -> climbAuto.reaching(true)));
   }
