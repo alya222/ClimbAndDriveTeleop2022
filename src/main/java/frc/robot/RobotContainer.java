@@ -43,41 +43,44 @@ public class RobotContainer {
   // ClimAuto subsystem
   private final Climb climb = new Climb();
 
-  // Drive with Controller 
+  /* --- Default Commands --- */
+
+  // drive with controller 
   private Command manualDrive = new RunCommand(
     
-    () -> rDrive.getDifferentialDrive().
-    tankDrive(rDrive.deadband(xbox.getRawAxis(kLeftY.value), percentDeadband), 
-    rDrive.deadband(xbox.getRawAxis(kRightY.value), percentDeadband),
-    false
-    ),
+  // drive motors run in tank drive based on joystick inputs
+    () -> rDrive.getDifferentialDrive().tankDrive (
+      rDrive.deadband(xbox.getRawAxis(kLeftY.value), percentDeadband), 
+      rDrive.deadband(xbox.getRawAxis(kRightY.value), percentDeadband),
+      false
+      ),
     rDrive
-    );
+  );
 
-    private Command moveArm = new RunCommand(
+  // move lift with triggers
+  private Command moveArm = new RunCommand(
   
-  // move the lift up and down with right and left triggers, respectively
+    // move the lift up and down with right and left triggers, respectively
     () -> climb.move(xbox.getRawAxis(kRightTrigger.value) - xbox.getRawAxis(kLeftTrigger.value)), climb);
 
+  /* --- Container for the robot --- contains subsystems, OI devices, and commands */
   public RobotContainer() {
-    rDrive.setDefaultCommand(manualDrive);
 
     // configure the button bindings
     configureButtonBindings();
 
-    // run climbTeleop as the default command
+    // run manualDrive and moveArm as the default commands
+    rDrive.setDefaultCommand(manualDrive);
     climb.setDefaultCommand(moveArm);
   }
 
   private void configureButtonBindings() {
-    
-    // checking for whether hook is engaged when A is pressed
-    // if it is: run the climb sequential command group
-    // if it is not: run an empty instant command group (does nothing)
 
+    // piston (arm) moves in if A is pressed
     new JoystickButton(xbox, kA.value)
     .whenPressed(new InstantCommand (() -> climb.reaching(false)));
 
+    // piston (arm) moves out if Y is pressed
     new JoystickButton(xbox, kY.value)
     .whenPressed(new InstantCommand (() -> climb.reaching(true)));
   }
